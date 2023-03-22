@@ -4,32 +4,30 @@ from setuptools import setup, find_packages
 with open('requirements.txt') as f:
     requirements = f.readlines()
   
-long_description = 'A longer description of the project, possibly not needed as your github readme should cover this'
+with open ('readme.md') as f:
+    long_description = f.read()
 
-#scripts are full files intended to be run by the commandline, read more about this before implementing
-scripts_list = ["name:path"]
-#packages are files inteded to be imported by other scripts
-packages_list= ["name:path"] #find_packages() is an automatic option but you have to be more careful about names
+package_list = find_packages(where="QILNetworked")
+
 
 
 setup(
-        name ='qil_name',
+        name ='qilNetworked',
         version ='1.0.0',
-        author ='Your name',
-        author_email ='@uni.sydney.edu.au',
-        url ='https://github.com/Quantum-Integration-Laboratory/',
-        description ='A shorter description, possibly just copy github about section',
+        author ='Ben Field',
+        author_email ='bfie3543@uni.sydney.edu.au',
+        url ='https://github.com/Quantum-Integration-Laboratory/networked_instrument',
+        description ='A set of Mixin classes to allow an instrument to run a TCP/IP client and server',
         long_description = long_description,
         long_description_content_type ="text/markdown",
-        license ='A license type',
-        packages = packages_list,
-        scripts=scripts_list,
+        license ='BSD-2',
+        packages = package_list,
         classifiers =[
             "Programming Language :: Python :: 3",
             "License :: OSI Approved :: BSD-2 License",
             "Operating System :: OS Independent",
         ],
-        keywords ='anything that maybe useful',
+        keywords =['DAQ','Mixin'],
         install_requires = requirements,
         zip_safe = False
 )
