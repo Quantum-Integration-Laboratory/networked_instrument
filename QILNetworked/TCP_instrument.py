@@ -171,7 +171,8 @@ class cTCPInstrumentServerMixin():
             if mask & selectors.EVENT_WRITE:
                 #if we have data in the output buffer send it and remove it.
                 if data.outb:
-                    print(f"Sending {data.outb!r} of length {len(data.outb)} to {data.addr}")
+                    #print(f"Sending {data.outb!r} of length {len(data.outb)} to {data.addr}")
+                    print(f"Sending packet of length {len(data.outb)} to {data.addr}")
                     sent = sock.send(data.outb)  # Should be ready to write
                     data.outb = data.outb[sent:]
         #Handle an error where the client is interupted while a socket is open
@@ -199,7 +200,11 @@ class cTCPInstrumentServerMixin():
         -------
         """
         
-        self.queries= queries
+        for k in queries:
+            self.queries[(k+QUERYID).encode()]=queries[k]
+
+        
+        
     def setFunctions(self,functions:dict):
         """
         Setter for the functions, queries should be a short (Ideally 4 character) binary string key with an associated function to call,
@@ -213,8 +218,10 @@ class cTCPInstrumentServerMixin():
         Returns
         -------
         """
-        
-        self.functions=functions
+        for k in functions:
+           self.functions[(k+FUNCTIONID)]=functions[k]
+
+        #self.functions=functions
 
 
     def handleCalls(self,output,input):
@@ -409,7 +416,9 @@ class cTCPInstrumentClientMixin():
         Returns
         -------
         """
-        self.queries= invertDict(queries)
+        queries= invertDict(queries)
+        for k in queries:
+            self.queries[(k+QUERYID).encode()]=queries[k]
 
     def setFunctions(self,functions:dict):
         """
@@ -422,10 +431,13 @@ class cTCPInstrumentClientMixin():
         Returns
         -------
         """
-        self.functions=invertDict(functions)
+        functions=invertDict(functions)
+        for k in functions:
+           self.functions[(k+FUNCTIONID)]=functions[k]
 
 
-    def query(self,string:bytes, buffer:int=1024,decode:bool=True):
+
+    def query(self,string:bytes, buffer:int=1024,flt:bool=True):
         """
         Send a byte string to the server and receive a response.
 
@@ -435,7 +447,7 @@ class cTCPInstrumentClientMixin():
             A byte string correpsonding to a query or function and its parameters
         buffer: int
             The expected maximum return size
-        decode: bool
+        flt : bool
             If true convert the returned value to a float, otherwise return a bit string
 
         Returns
@@ -456,7 +468,7 @@ class cTCPInstrumentClientMixin():
             flag = data[idx:idx+len(ERRORID)+1]
             error = val2Key(ERRORS,flag)
             raise KeyError("%s detected in string %s. Recieved: %s"%(error,string,data))
-        if decode:
+        if flt:
             return floatFromBytes(data)[0]
         else:
             return data
@@ -598,6 +610,8 @@ def floatFromBytes(x):
         
     """
     return struct.unpack("<f",x)
+
+
 
 def invertDict(x:dict):
     """
