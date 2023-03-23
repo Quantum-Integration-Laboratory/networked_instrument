@@ -201,7 +201,7 @@ class cTCPInstrumentServerMixin():
         """
         
         for k in queries:
-            self.queries[(k+QUERYID).encode()]=queries[k]
+            self.queries[(k).encode()+QUERYID]=queries[k]
 
         
         
@@ -219,7 +219,7 @@ class cTCPInstrumentServerMixin():
         -------
         """
         for k in functions:
-           self.functions[(k+FUNCTIONID)]=functions[k]
+           self.functions[k+FUNCTIONID.decode()]=functions[k]
 
         #self.functions=functions
 
@@ -418,7 +418,7 @@ class cTCPInstrumentClientMixin():
         """
         queries= invertDict(queries)
         for k in queries:
-            self.queries[(k+QUERYID).encode()]=queries[k]
+            self.queries[(k).encode()+QUERYID]=queries[k]
 
     def setFunctions(self,functions:dict):
         """
@@ -433,7 +433,7 @@ class cTCPInstrumentClientMixin():
         """
         functions=invertDict(functions)
         for k in functions:
-           self.functions[(k+FUNCTIONID)]=functions[k]
+           self.functions[k+FUNCTIONID.decode()]=functions[k]
 
 
 
