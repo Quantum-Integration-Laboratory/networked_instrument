@@ -26,7 +26,7 @@ ERRORS = {
 }
 
 QUERYID=b"?"
-FUNCTIONID=b":"
+FUNCTIONID=":"
 
 
 #finds the key from the given value 
@@ -418,7 +418,7 @@ class cTCPInstrumentClientMixin():
         """
         queries= invertDict(queries)
         for k in queries:
-            self.queries[(k).encode()+QUERYID]=queries[k]
+            self.queries[k]= (queries[k]).encode()+QUERYID
 
     def setFunctions(self,functions:dict):
         """
@@ -433,7 +433,7 @@ class cTCPInstrumentClientMixin():
         """
         functions=invertDict(functions)
         for k in functions:
-           self.functions[k+FUNCTIONID.decode()]=functions[k]
+           self.functions[k]= (functions[k])+FUNCTIONID
 
 
 
