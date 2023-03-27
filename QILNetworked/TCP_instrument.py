@@ -219,7 +219,7 @@ class cTCPInstrumentServerMixin():
         -------
         """
         for k in functions:
-           self.functions[k+FUNCTIONID.decode()]=functions[k]
+           self.functions[k+FUNCTIONID]=functions[k]
 
         #self.functions=functions
 
