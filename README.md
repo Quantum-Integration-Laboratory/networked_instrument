@@ -99,7 +99,7 @@ It is also important to note that the client copy of `cInstrument` should never 
 An example __init__ is given below but not expanded upon.
 ```
 class cInstrumentClient(cInstrument,cTCPInstrumentClientMixin,FUNCDEFS):
-    def __init__(self,host="qil-wario",port=9090):
+    def __init__(self,host="host-name",port=9090):
         cInstrument.__init__(self,init=False)
         FUNCDEFS.__init__(self)
         cTCPInstrumentClientMixin.__init__(self,host=host,port=port)
