@@ -20,7 +20,7 @@ setup(
         description ='A set of Mixin classes to allow an instrument to run a TCP/IP client and server',
         long_description = long_description,
         long_description_content_type ="text/markdown",
-        license ='BSD-2',
+        license ='GPLv3',
         packages = package_list,
         classifiers =[
             "Programming Language :: Python :: 3",
