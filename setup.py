@@ -7,12 +7,12 @@ with open('requirements.txt') as f:
 with open ('readme.md') as f:
     long_description = f.read()
 
-package_list = find_packages(where="qil-Networked")
+package_list = find_packages(where="qil_Networked")
 
 
 
 setup(
-        name ='qil-Networked',
+        name ='qil_Networked',
         version ='1.0.0',
         author ='Ben Field',
         author_email ='bfie3543@uni.sydney.edu.au',
