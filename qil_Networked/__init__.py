@@ -1,2 +1,2 @@
 __all__ = ["TCP_instrument"]
-import QILNetworked.TCP_instrument as QILNetworked
+import qil_Networked.TCP_instrument as qil_Networked
