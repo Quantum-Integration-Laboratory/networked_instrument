@@ -13,6 +13,7 @@ import numpy as np
 import os
 from contextlib import nullcontext
 import traceback
+import time
 #from abc import ABCMeta
 
 # A pre agreed upon set of errors that are shared between client and server
@@ -172,7 +173,9 @@ class cTCPInstrumentServerMixin():
                 #if we have data in the output buffer send it and remove it.
                 if data.outb:
                     #print(f"Sending {data.outb!r} of length {len(data.outb)} to {data.addr}")
-                    print(f"Sending packet of length {len(data.outb)} to {data.addr}")
+                    t=time.localtime()
+                    ts=strftime("%Y/%m/%d-%H:%M:%S",t)
+                    print(f"{ts}    Sending packet of length {len(data.outb)} to {data.addr}")
                     sent = sock.send(data.outb)  # Should be ready to write
                     data.outb = data.outb[sent:]
         #Handle an error where the client is interupted while a socket is open
