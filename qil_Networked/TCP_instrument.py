@@ -28,7 +28,7 @@ ERRORS = {
 
 QUERYID=b"?"
 FUNCTIONID=b":"
-
+TERMINATOR=b"\n"
 
 #finds the key from the given value 
 val2Key=lambda x,i: list(x.keys())[list(x.values()).index(i)]
@@ -163,7 +163,7 @@ class cTCPInstrumentServerMixin():
                 recv_data = sock.recv(1024)  # Should be ready to read
                 #If we recieved data append it to the buffer and close the connection
                 if recv_data:
-                    data.outb+=self.handleCalls(data.outb,recv_data)
+                    data.outb+=self.handleCalls(recv_data)+TERMINATOR
                 else:
                     print(f"Closing connection to {data.addr}")
                     self.sel.unregister(sock)
@@ -171,12 +171,13 @@ class cTCPInstrumentServerMixin():
             #if we are writing
             if mask & selectors.EVENT_WRITE:
                 #if we have data in the output buffer send it and remove it.
-                if data.outb:
+                while data.outb:
                     #print(f"Sending {data.outb!r} of length {len(data.outb)} to {data.addr}")
                     t=time.localtime()
                     ts=strftime("%Y/%m/%d-%H:%M:%S",t)
-                    print(f"{ts}    Sending packet of length {len(data.outb)} to {data.addr}")
                     sent = sock.send(data.outb)  # Should be ready to write
+                    print(f"{ts}    Sending packet of length {sent} from buffer of length {len(data.outb)} to {data.addr}")
+
                     data.outb = data.outb[sent:]
         #Handle an error where the client is interupted while a socket is open
         except ConnectionResetError:
@@ -227,7 +228,7 @@ class cTCPInstrumentServerMixin():
         #self.functions=functions
 
 
-    def handleCalls(self,output,input):
+    def handleCalls(self,input):
         """
         Works out if we made a query, function or unknown call, and make sure outputs are packaged as bytes
         
@@ -349,7 +350,7 @@ class cTCPInstrumentServerMixin():
 
 
 class cTCPInstrumentClientMixin():
-    def __init__(self,host,port=9090,timeout=30) -> None:
+    def __init__(self,host,port=9090,timeout=30,**kwargs) -> None:
         """
         A client wrapper for an inherited class, this generally needs a non-functional copy of the Co-Parent class to determine function layout.
         NOTE: This Must overload any functions of its Co-parent class to defer them to a query or function
@@ -459,11 +460,17 @@ class cTCPInstrumentClientMixin():
             The data returned by the server, if decode is true this returns a float otherwise the bytes
         """
         #connect to the socket send the stirng and wait for a response.
+        fullData=[]
         with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:
             s.settimeout(self.timeout)
             s.connect((self.host,self.port))
             s.sendall(string)
-            data=s.recv(buffer)
+            while True:
+                data=s.recv(buffer)
+                fullData.append(data)
+                if TERMINATOR in data:
+                    break
+            
         #if we recieve an error flag, find it, work out what error it is
         #print the error type, the sent string and the returned string.
         if ERRORID in data:
