@@ -174,7 +174,7 @@ class cTCPInstrumentServerMixin():
                 if data.outb:
                     #print(f"Sending {data.outb!r} of length {len(data.outb)} to {data.addr}")
                     t=time.localtime()
-                    ts=strftime("%Y/%m/%d-%H:%M:%S",t)
+                    ts=time.strftime("%Y/%m/%d-%H:%M:%S",t)
                     print(f"{ts}    Sending packet of length {len(data.outb)} to {data.addr}")
                     sent = sock.send(data.outb)  # Should be ready to write
                     data.outb = data.outb[sent:]
