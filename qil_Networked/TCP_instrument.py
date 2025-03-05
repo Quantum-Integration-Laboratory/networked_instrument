@@ -323,7 +323,7 @@ class cTCPInstrumentServerMixin():
             exc_info=sys.exc_info()
             traceback.print_exc(exc_info)
             return self.errorHandler("FunctionError")
-        #print(output)
+        #print(len(output),output)
 
         #Assume we are sending back an array as that is quite effecient to turn to bytes
         #May need to double check back conversion 
