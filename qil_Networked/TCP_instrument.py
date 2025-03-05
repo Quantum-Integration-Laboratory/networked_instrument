@@ -559,8 +559,12 @@ def typeConvert(args:list, func:callable):
     #gets all the typing annotations from a function
     types = list(func.__annotations__.values())
     #loop through and convert type
-    for i,t in enumerate(types):
-        args[i]=t(args[i])
+    for i,t in enumerate(args):
+        t=types[i]
+        if args[i]=="None":
+            args[i]=None
+        else:
+            args[i]=t(args[i])
     return args
 
 
