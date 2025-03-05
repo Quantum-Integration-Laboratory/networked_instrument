@@ -66,13 +66,13 @@ class cTCPInstrumentServerMixin():
             self.host = socket.gethostname()
         else:
             self.host=host
-        self.port=port
+        self.sPort=port
 
         self.silent=silent
 
         #create the socket and bind to a host and port, and start listening for calls
         lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        lsock.bind((self.host, self.port))
+        lsock.bind((self.host, self.sPort))
         lsock.listen()
         
         
@@ -91,7 +91,7 @@ class cTCPInstrumentServerMixin():
         Returns
         -------
         """
-        print(f"Listening on {(self.host, self.port)}")
+        print(f"Listening on {(self.host, self.sPort)}")
 
         try:
             while True:
@@ -403,7 +403,7 @@ class cTCPInstrumentClientMixin():
         """
 
         self.host = host
-        self.port = port
+        self.sPort = port
         self.timeout=timeout
 
         self.queries = {}
@@ -463,7 +463,7 @@ class cTCPInstrumentClientMixin():
         data=b''
         with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:
             s.settimeout(self.timeout)
-            s.connect((self.host,self.port))
+            s.connect((self.host,self.sPort))
             s.sendall(string)
             while True:
                 databuffer=s.recv(buffer)

@@ -40,7 +40,7 @@ with open ('readme.md') as f:
     long_description = f.read()
     
 #automatically gets all packages in the passed folder
-package_list = find_packages(where=DriverName)
+package_list = find_packages()#where=DriverName
 
 
 setup(
