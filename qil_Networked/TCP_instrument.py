@@ -460,17 +460,18 @@ class cTCPInstrumentClientMixin():
             The data returned by the server, if decode is true this returns a float otherwise the bytes
         """
         #connect to the socket send the stirng and wait for a response.
-        fullData=[]
+        data=b''
         with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:
             s.settimeout(self.timeout)
             s.connect((self.host,self.port))
             s.sendall(string)
             while True:
-                data=s.recv(buffer)
-                fullData.append(data)
-                if TERMINATOR in data:
+                databuffer=s.recv(buffer)
+                data+=databuffer
+                if data[-1]== int.from_bytes(b'\n','little'):
                     break
-            
+        #trim the terminator character
+        data=data[:-1]
         #if we recieve an error flag, find it, work out what error it is
         #print the error type, the sent string and the returned string.
         if ERRORID in data:
