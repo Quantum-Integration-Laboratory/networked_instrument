@@ -174,7 +174,7 @@ class cTCPInstrumentServerMixin():
                 while data.outb:
                     #print(f"Sending {data.outb!r} of length {len(data.outb)} to {data.addr}")
                     t=time.localtime()
-                    ts=strftime("%Y/%m/%d-%H:%M:%S",t)
+                    ts=time.strftime("%Y/%m/%d-%H:%M:%S",t)
                     sent = sock.send(data.outb)  # Should be ready to write
                     print(f"{ts}    Sending packet of length {sent} from buffer of length {len(data.outb)} to {data.addr}")
 
@@ -323,7 +323,7 @@ class cTCPInstrumentServerMixin():
             exc_info=sys.exc_info()
             traceback.print_exc(exc_info)
             return self.errorHandler("FunctionError")
-        #print(output)
+        #print(len(output),output)
 
         #Assume we are sending back an array as that is quite effecient to turn to bytes
         #May need to double check back conversion 
