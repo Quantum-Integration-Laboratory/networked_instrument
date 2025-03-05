@@ -408,6 +408,10 @@ class cTCPInstrumentClientMixin():
 
         self.queries = {}
         self.functions= {}
+        if "bufferSize" in kwargs:
+            self.bufferSize=kwargs["bufferSize"]
+        else:
+            self.bufferSize=2048
 
     def setQueries(self,queries:dict):
         """
@@ -468,6 +472,7 @@ class cTCPInstrumentClientMixin():
             while True:
                 databuffer=s.recv(buffer)
                 data+=databuffer
+                #print(data)
                 if data[-1]== int.from_bytes(b'\n','little'):
                     break
         #trim the terminator character
@@ -483,6 +488,8 @@ class cTCPInstrumentClientMixin():
             return floatFromBytes(data)[0]
         else:
             return data
+
+
     def genFunctionCall(self,func,args):
         """
         Generates a the function call to send to the server, getting the correct code from the dict and appending argument
@@ -653,3 +660,29 @@ class HiddenPrints:
     def __exit__(self, exc_type, exc_val, exc_tb):
         sys.stdout.close()
         sys.stdout = self._original_stdout      
+
+def functionDecorator(func):
+    """
+    Decorator for handling function calls, the wrapped function needs to return itself and have correct arguments setup
+    e.g.
+
+    @function decorator
+    def function(self,arg1:float=None)->float:
+        return self.function, kwargs
+
+    """
+    def functionCall(self,*args,**kwargs):
+        pfunc,kwargs=func(self) #call the function to get its signature
+        defs=func.__defaults__ #get the default arguments
+        pargs=list(args+defs[len(args):]) #replace any missing arguments with the default
+
+        call=self.genFunctionCall(pfunc,pargs) #generate the function call
+        #we should never call float, but other kwargs are fine
+        kwargs={**{'flt':False},**kwargs}
+        response = self.query(call,**kwargs)# send and get the reponse
+        data = np.frombuffer(response)
+        #return a list or single number
+        if len(data)==1:
+            return data.item()
+        return data    
+    return functionCall
