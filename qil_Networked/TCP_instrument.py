@@ -245,6 +245,9 @@ class cTCPInstrumentServerMixin():
             The filled output buffer
 
         """
+
+        print("\t",input)
+
         #check if we are a query without any parameter passes
         if QUERYID in input:         
            output=self.handleQueries(input)
@@ -271,9 +274,13 @@ class cTCPInstrumentServerMixin():
         """
         #if we have a valid key call that function
         if input in self.queries.keys():
-            
-            output  = self.queries[input]()
-            
+            try:
+                output  = self.queries[input]()
+            except Exception as error:
+                print(error)
+                # exc_info=sys.exc_info()
+                # traceback.print_exc(exc_info)
+                return self.errorHandler("FunctionError")        
             #if we return a status flag, return an error code + the status
             if type(output)==str or type(output)==bool:
                 output=self.errorHandler("StatusError")+str(output).encode()
@@ -320,8 +327,9 @@ class cTCPInstrumentServerMixin():
 
         #if the function errors it will be printed to the server, this could be sent back as speed is no longer an issue but this is fine for now
         except Exception as error:
-            exc_info=sys.exc_info()
-            traceback.print_exc(exc_info)
+            print(error)
+            # exc_info=sys.exc_info()
+            # traceback.print_exc(exc_info)
             return self.errorHandler("FunctionError")
         #print(len(output),output)
 
